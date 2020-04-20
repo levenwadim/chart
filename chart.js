@@ -74,7 +74,7 @@ class Hint {
     const point = chart.points[hoveredDot];
     this.elem.className = this.getHintClassName(point, chart);
 
-    if (this.elem.className.indexOf(Hint.ELEM_SELECTOR + '-top') !== -1) {
+    if (this.elem.className.indexOf(Hint.ELEM_SELECTOR.substring(1) + '-top') !== -1) {
       this.elem.style.top = (Math.floor(point.y - this.elem.offsetHeight - Hint.HINT_TRIANGLE_SIZE - 5)) + 'px';
     } else {
       this.elem.style.top = (Math.floor(point.y + Hint.HINT_TRIANGLE_SIZE + 5)) + 'px';
@@ -116,11 +116,13 @@ class Chart {
       ...data,
     };
 
+    elem.innerHTML = '';
     this.init(elem);
   }
 
   init(elem) {
-    this.data = this.params.data;
+    this.hasData = false;
+    this.data = this.params.data || [];
     this.labels = this.params.labels || [];
     this.styles = this.params.styles || [];
 
@@ -135,6 +137,12 @@ class Chart {
     this.countDots = 0;
 
     this.data.forEach((chart) => {
+      if (!chart) {
+        return;
+      }
+
+      this.hasData = true;
+
       if (chart.length > this.countDots) {
         this.countDots = chart.length;
       }
@@ -147,7 +155,7 @@ class Chart {
           this.min = value;
         }
       })
-    })
+    });
 
     const svg = this.createSvgElement('svg', {
       width: this.width,
@@ -158,15 +166,17 @@ class Chart {
 
     this.hint = new Hint(elem);
 
-    this.draw();
-    this.svg.addEventListener('mousemove', (target) => {
-      if (target.offsetX < this.paddingSide || target.offsetX > this.width - this.paddingSide) {
-        return;
-      }
+    if (this.hasData) {
+      this.draw();
+      this.svg.addEventListener('mousemove', (target) => {
+        if (target.offsetX < this.paddingSide || target.offsetX > this.width - this.paddingSide) {
+          return;
+        }
 
-      const hoveredDot = this.getHoveredDot(target.offsetX);
-      this.hint.show(hoveredDot, this);
-    });
+        const hoveredDot = this.getHoveredDot(target.offsetX);
+        this.hint.show(hoveredDot, this);
+      });
+    }
   }
 
   draw() {
@@ -326,3 +336,5 @@ class Chart {
   }
 
 }
+
+export default Chart;
