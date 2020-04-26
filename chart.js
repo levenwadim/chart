@@ -50,7 +50,7 @@ class Hint {
     chart.data.forEach((chartData, chartIndex) => {
       const linesStyle = chart.getStyle('lines', chartIndex);
       const pointsStyle = chart.getStyle('points', chartIndex);
-      contentHtml += Hint.getContentRowHtml(chartData[hoveredDot], linesStyle.fill, pointsStyle.stroke);
+      contentHtml += Hint.getContentRowHtml(chartData[hoveredDot], linesStyle.fill, pointsStyle.fill);
     })
     return contentHtml;
   }
@@ -95,29 +95,71 @@ class Chart {
 
   DEFAULT_BG_COLOR = '#222';
   DEFAULT_FG_COLOR = '#fff';
+
+  DEFAULT_PADDING = 50;
   DEFAULT_STROKE_WIDTH = 1;
   DEFAULT_LINE_STROKE_WIDTH = 3;
+  DEFAULT_LINE_BEZIER = true;
+  DEFAULT_POINT_SIZE = 3;
 
   constructor(elem, data) {
     this.params = {
       // default params
-      padding: 50,
+      padding: this.DEFAULT_PADDING,
       type: Chart.LINE_TYPE,
-      style: {
-        points: {
-          size: 3,
-        },
-        lines: {
-          size: 3,
-          bezier: true,
-        },
-      },
 
       ...data,
     };
 
     elem.innerHTML = '';
+
+    this.initStyle();
     this.init(elem);
+  }
+
+  initStyle() {
+    if (this.params.style === undefined) {
+      this.params.style = {};
+    }
+
+    // Default points style
+    if (this.params.style.points === undefined) {
+      this.params.style.points = {
+        size: this.DEFAULT_POINT_SIZE,
+      };
+    }
+    if (this.params.style.points.size === undefined) {
+      this.params.style.points.size = this.DEFAULT_POINT_SIZE;
+    }
+
+    // Default line style
+    if (this.params.style.lines === undefined) {
+      this.params.style.lines = {
+        size: this.DEFAULT_POINT_SIZE,
+      };
+    }
+    if (this.params.style.lines.size === undefined) {
+      this.params.style.lines.size = this.DEFAULT_POINT_SIZE;
+    }
+    if (this.params.style.lines.bezier === undefined) {
+      this.params.style.lines.bezier = this.DEFAULT_LINE_BEZIER;
+    }
+  }
+  getStyle(shapeName, chartIndex) {
+    let style = {};
+    let styleChart = {};
+
+    if (this.params.style[shapeName] && this.params.style[shapeName]) {
+      style = this.params.style[shapeName];
+    }
+    if (this.styles[chartIndex] && this.styles[chartIndex][shapeName]) {
+      styleChart = this.styles[chartIndex][shapeName];
+    }
+
+    return {
+      ...style,
+      ...styleChart
+    };
   }
 
   init(elem) {
@@ -224,17 +266,6 @@ class Chart {
 
       this.addPath(path, linesStyle);
     });
-  }
-
-  getStyle(shapeName, chartIndex) {
-    if (this.styles[chartIndex] && this.styles[chartIndex][shapeName]) {
-      return this.styles[chartIndex][shapeName];
-    }
-    if (this.params.style[shapeName] && this.params.style[shapeName]) {
-      return this.params.style[shapeName];
-    }
-
-    return {};
   }
 
   opposedLine(prev, next) {
