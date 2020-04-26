@@ -33,14 +33,14 @@ class Hint {
         </div>
       `;
   }
-  static getContentRowHtml(value, color, borderColor) {
+  static getContentRowHtml(value, index, color, borderColor) {
     color = color || Hint.DEFAULT_LEGEND_COLOR;
     borderColor = borderColor || Hint.DEFAULT_LEGEND_BORDER_COLOR;
 
     return `
         <div class="${Hint.CONTENT_ROW_SELECTOR.substring(1)}">
             <div class="${Hint.CONTENT_ROW_LEGEND_SELECTOR.substring(1)}" style="background: ${color}; border-color: ${borderColor};"></div>
-            <span class="${Hint.CONTENT_ROW_VALUE_SELECTOR.substring(1)}">${value}</span>
+            <span class="${Hint.CONTENT_ROW_VALUE_SELECTOR.substring(1)}" data-index="${index}">${value}</span>
         </div>
       `;
   }
@@ -50,9 +50,14 @@ class Hint {
     chart.data.forEach((chartData, chartIndex) => {
       const linesStyle = chart.getStyle('lines', chartIndex);
       const pointsStyle = chart.getStyle('points', chartIndex);
-      contentHtml += Hint.getContentRowHtml(chartData[hoveredDot], linesStyle.fill, pointsStyle.fill);
+      contentHtml += Hint.getContentRowHtml(chartData[hoveredDot], chartIndex, linesStyle.fill, pointsStyle.fill);
     })
     return contentHtml;
+  }
+  updContent(hoveredDot, chart) {
+    chart.data.forEach((chartData, chartIndex) => {
+      this.content.querySelector(Hint.CONTENT_ROW_VALUE_SELECTOR + '[data-index="' + chartIndex + '"]').textContent = chartData[hoveredDot];
+    })
   }
 
   getHintClassName(point, chart) {
@@ -68,7 +73,11 @@ class Hint {
   }
 
   show(hoveredDot, chart) {
-    this.content.innerHTML = this.getContentHtml(hoveredDot, chart);
+    if (this.content.innerHTML === '') {
+      this.content.innerHTML = this.getContentHtml(hoveredDot, chart);
+    } else {
+      this.updContent(hoveredDot, chart);
+    }
     this.title.textContent = chart.labels[hoveredDot];
 
     const point = chart.points[hoveredDot];
@@ -343,6 +352,9 @@ class Chart {
     return this.calcAxios(this.width, value, this.countDots - 1);
   }
   getPointY(value) {
+    if (this.min === this.max) {
+      return this.height / 2;
+    }
     return this.calcAxios(this.height, value, this.max);
   }
 
