@@ -8,6 +8,7 @@
   color: #fff;
   border-radius: 4px;
   padding: 4px;
+  white-space: nowrap;
 }
 
 .chartHint .chartHint__triangle {
@@ -38,7 +39,8 @@
 }
 
 .chartHint__title {
-  font-size: 14px;
+  font-size: 12px;
+  font-weight: bold;
 }
 
 .chartHint__content-row {
