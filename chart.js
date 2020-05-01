@@ -297,15 +297,8 @@ class Chart {
     const angle = o.angle + (reverse ? Math.PI : 0);
     const length = o.length * smoothing;
 
-    let xDiff = Math.cos(angle) * length
-    xDiff = Math.abs(xDiff) > 15 ? Math.sign(xDiff) * 15 : xDiff;
-
-    let yDiff = Math.sin(angle) * length;
-    yDiff = Math.abs(yDiff) > 7 ? Math.sign(yDiff) * 7 : yDiff;
-
-    const x = current.x + xDiff;
-    const y = current.y + yDiff;
-
+    const x = current.x + Math.cos(angle) * length;
+    const y = current.y + Math.sin(angle) * length;
     return {x, y};
   }
 
@@ -356,17 +349,17 @@ class Chart {
   }
 
   getPointX(value) {
-    return this.calcAxios(this.width, value, 0, this.countDots - 1);
+    return this.calcAxios(this.width, value, this.countDots - 1);
   }
   getPointY(value) {
     if (this.min === this.max) {
       return this.height / 2;
     }
-    return this.calcAxios(this.height, value, this.min, this.max);
+    return this.calcAxios(this.height, value, this.max);
   }
 
-  calcAxios(pixels, value, minValue, maxValue) {
-    return (this.paddingSide) + ((pixels - this.padding) * ((value - minValue) / (maxValue - minValue)));
+  calcAxios(pixels, value, maxValue) {
+    return (this.paddingSide) + ((pixels - this.padding) * (value / maxValue));
   }
 
   inverseY(value) {
