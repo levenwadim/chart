@@ -1,46 +1,46 @@
 class Hint {
-  static HINT_TRIANGLE_SIZE = 5;
-  static DEFAULT_LEGEND_COLOR = '#222';
-  static DEFAULT_LEGEND_BORDER_COLOR = '#fff';
-
-  static ELEM_SELECTOR = '.chartHint';
-  static TRIANGLE_SELECTOR = '.chartHint__triangle';
-  static TITLE_SELECTOR = '.chartHint__title';
-  static CONTENT_SELECTOR = '.chartHint__content';
-
-  static ELEM_TOP_CLASS = 'chartHint-top';
-  static ELEM_BOTTOM_CLASS = 'chartHint-bottom';
-
-  static CONTENT_ROW_SELECTOR = '.chartHint__content-row';
-  static CONTENT_ROW_LEGEND_SELECTOR = '.chartHint__content-row__legend';
-  static CONTENT_ROW_VALUE_SELECTOR = '.chartHint__content-row__value';
-
   constructor(parentElem) {
-    parentElem.insertAdjacentHTML('beforeend', Hint.getElementHtml());
+    this.HINT_TRIANGLE_SIZE = 5;
+    this.DEFAULT_LEGEND_COLOR = '#222';
+    this.DEFAULT_LEGEND_BORDER_COLOR = '#fff';
 
-    this.elem = parentElem.querySelector(Hint.ELEM_SELECTOR);
-    this.triangle = this.elem.querySelector(Hint.TRIANGLE_SELECTOR);
-    this.title = this.elem.querySelector(Hint.TITLE_SELECTOR);
-    this.content = this.elem.querySelector(Hint.CONTENT_SELECTOR);
+    this.ELEM_SELECTOR = '.chartHint';
+    this.TRIANGLE_SELECTOR = '.chartHint__triangle';
+    this.TITLE_SELECTOR = '.chartHint__title';
+    this.CONTENT_SELECTOR = '.chartHint__content';
+
+    this.ELEM_TOP_CLASS = 'chartHint-top';
+    this.ELEM_BOTTOM_CLASS = 'chartHint-bottom';
+
+    this.CONTENT_ROW_SELECTOR = '.chartHint__content-row';
+    this.CONTENT_ROW_LEGEND_SELECTOR = '.chartHint__content-row__legend';
+    this.CONTENT_ROW_VALUE_SELECTOR = '.chartHint__content-row__value';
+
+    parentElem.insertAdjacentHTML('beforeend', this.getElementHtml());
+
+    this.elem = parentElem.querySelector(this.ELEM_SELECTOR);
+    this.triangle = this.elem.querySelector(this.TRIANGLE_SELECTOR);
+    this.title = this.elem.querySelector(this.TITLE_SELECTOR);
+    this.content = this.elem.querySelector(this.CONTENT_SELECTOR);
   }
 
-  static getElementHtml() {
+  getElementHtml() {
     return `
-        <div class="${Hint.ELEM_SELECTOR.substring(1)}" style="display: none;">
-            <div class="${Hint.TITLE_SELECTOR.substring(1)}"></div>
-            <div class="${Hint.CONTENT_SELECTOR.substring(1)}"></div>
-            <div class="${Hint.TRIANGLE_SELECTOR.substring(1)}"></div>
+        <div class="${this.ELEM_SELECTOR.substring(1)}" style="display: none;">
+            <div class="${this.TITLE_SELECTOR.substring(1)}"></div>
+            <div class="${this.CONTENT_SELECTOR.substring(1)}"></div>
+            <div class="${this.TRIANGLE_SELECTOR.substring(1)}"></div>
         </div>
       `;
   }
-  static getContentRowHtml(value, index, color, borderColor) {
-    color = color || Hint.DEFAULT_LEGEND_COLOR;
-    borderColor = borderColor || Hint.DEFAULT_LEGEND_BORDER_COLOR;
+  getContentRowHtml(value, index, color, borderColor) {
+    color = color || this.DEFAULT_LEGEND_COLOR;
+    borderColor = borderColor || this.DEFAULT_LEGEND_BORDER_COLOR;
 
     return `
-        <div class="${Hint.CONTENT_ROW_SELECTOR.substring(1)}">
-            <div class="${Hint.CONTENT_ROW_LEGEND_SELECTOR.substring(1)}" style="background: ${color}; border-color: ${borderColor};"></div>
-            <span class="${Hint.CONTENT_ROW_VALUE_SELECTOR.substring(1)}" data-index="${index}">${value}</span>
+        <div class="${this.CONTENT_ROW_SELECTOR.substring(1)}">
+            <div class="${this.CONTENT_ROW_LEGEND_SELECTOR.substring(1)}" style="background: ${color}; border-color: ${borderColor};"></div>
+            <span class="${this.CONTENT_ROW_VALUE_SELECTOR.substring(1)}" data-index="${index}">${value}</span>
         </div>
       `;
   }
@@ -50,25 +50,25 @@ class Hint {
     chart.data.forEach((chartData, chartIndex) => {
       const linesStyle = chart.getStyle('lines', chartIndex);
       const pointsStyle = chart.getStyle('points', chartIndex);
-      contentHtml += Hint.getContentRowHtml(chartData[hoveredDot], chartIndex, linesStyle.fill, pointsStyle.fill);
+      contentHtml += this.getContentRowHtml(chartData[hoveredDot], chartIndex, linesStyle.fill, pointsStyle.fill);
     })
     return contentHtml;
   }
   updContent(hoveredDot, chart) {
     chart.data.forEach((chartData, chartIndex) => {
-      this.content.querySelector(Hint.CONTENT_ROW_VALUE_SELECTOR + '[data-index="' + chartIndex + '"]').textContent = chartData[hoveredDot];
+      this.content.querySelector(this.CONTENT_ROW_VALUE_SELECTOR + '[data-index="' + chartIndex + '"]').textContent = chartData[hoveredDot];
     })
   }
 
   getHintClassName(point, chart) {
-    const defaultHintClassName = Hint.ELEM_SELECTOR.substring(1);
+    const defaultHintClassName = this.ELEM_SELECTOR.substring(1);
     const centerX = (chart.width - chart.padding) / 2;
     const centerY = (chart.height - chart.padding) / 2;
 
     if (point.y > centerY) {
-      return defaultHintClassName + ' ' + Hint.ELEM_TOP_CLASS;
+      return defaultHintClassName + ' ' + this.ELEM_TOP_CLASS;
     } else {
-      return defaultHintClassName + ' ' + Hint.ELEM_BOTTOM_CLASS;
+      return defaultHintClassName + ' ' + this.ELEM_BOTTOM_CLASS;
     }
   }
 
@@ -83,13 +83,13 @@ class Hint {
     const point = chart.points[hoveredDot];
     this.elem.className = this.getHintClassName(point, chart);
 
-    if (this.elem.className.indexOf(Hint.ELEM_SELECTOR.substring(1) + '-top') !== -1) {
-      this.elem.style.top = (Math.floor(point.y - this.elem.offsetHeight - Hint.HINT_TRIANGLE_SIZE - 5)) + 'px';
+    if (this.elem.className.indexOf(this.ELEM_SELECTOR.substring(1) + '-top') !== -1) {
+      this.elem.style.top = (Math.floor(point.y - this.elem.offsetHeight - this.HINT_TRIANGLE_SIZE - 5)) + 'px';
     } else {
-      this.elem.style.top = (Math.floor(point.y + Hint.HINT_TRIANGLE_SIZE + 5)) + 'px';
+      this.elem.style.top = (Math.floor(point.y + this.HINT_TRIANGLE_SIZE + 5)) + 'px';
     }
     this.elem.style.left = (point.x - this.elem.offsetWidth / 2) + 'px';
-    this.triangle.style.left = ((this.elem.offsetWidth / 2) - Hint.HINT_TRIANGLE_SIZE) + 'px';
+    this.triangle.style.left = ((this.elem.offsetWidth / 2) - this.HINT_TRIANGLE_SIZE) + 'px';
 
     this.elem.style.display = 'inline-block';
   }
@@ -100,22 +100,22 @@ class Hint {
 }
 
 class Chart {
-  static LINE_TYPE = 'line';
-
-  DEFAULT_BG_COLOR = '#222';
-  DEFAULT_FG_COLOR = '#fff';
-
-  DEFAULT_PADDING = 50;
-  DEFAULT_STROKE_WIDTH = 1;
-  DEFAULT_LINE_STROKE_WIDTH = 3;
-  DEFAULT_LINE_BEZIER = true;
-  DEFAULT_POINT_SIZE = 3;
-
   constructor(elem, data) {
+    this.LINE_TYPE = 'line';
+
+    this.DEFAULT_BG_COLOR = '#222';
+    this.DEFAULT_FG_COLOR = '#fff';
+
+    this.DEFAULT_PADDING = 50;
+    this.DEFAULT_STROKE_WIDTH = 1;
+    this.DEFAULT_LINE_STROKE_WIDTH = 3;
+    this.DEFAULT_LINE_BEZIER = true;
+    this.DEFAULT_POINT_SIZE = 3;
+
     this.params = {
       // default params
       padding: this.DEFAULT_PADDING,
-      type: Chart.LINE_TYPE,
+      type: this.LINE_TYPE,
 
       ...data,
     };
