@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="../chart.css">
+    <style>
+        @font-face {
+            font-family: "Rubik";
+            src: url("Rubik/Rubik-Regular.ttf");
+        }
+
+        @font-face {
+            font-family: "RubikMedium";
+            src: url("Rubik/Rubik-Medium.ttf");
+            font-weight: bold;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+        }
+
+        #chart {
+            width: 334px;
+            height: 222px;
+            background: #222;
+        }
+
+        .chartHint__content-row__value {
+            font-family: 'Rubik', sans-serif;
+        }
+        .chartHint__title {
+            font-family: 'RubikMedium', sans-serif;
+        }
+    </style>
+</head>
+<body>
+<div id="chart"></div>
+<script type="module" src="./main.js"></script>
+</body>
+</html>
